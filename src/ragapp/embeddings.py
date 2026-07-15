@@ -55,7 +55,7 @@ class SentenceTransformerEmbedder(BaseEmbedder):
     used (weights are then cached locally under ~/.cache/huggingface)."""
 
     def __init__(self, model_name: str = "BAAI/bge-small-en-v1.5"):
-        from sentence_transformers import SentenceTransformer  # local import: optional dep
+        from sentence_transformers import SentenceTransformer  
 
         self.model_name = model_name
         self._model = SentenceTransformer(model_name)
@@ -67,19 +67,6 @@ class SentenceTransformerEmbedder(BaseEmbedder):
 
 
 class SpacyEmbedder(BaseEmbedder):
-    """Real pretrained static word vectors (GloVe-style, 300-dim), mean-pooled
-    per document by spaCy. Weaker than a modern contrastively-trained sentence
-    encoder (mean-pooled static vectors are known to under-separate unrelated
-    text - see README), but genuinely semantic and pretrained, unlike the
-    hashing fallback below.
-
-    Used to produce this project's actual checked-in eval numbers: spaCy's
-    models are distributed as GitHub release assets rather than from the
-    Hugging Face Hub, and GitHub happened to be reachable in the sandbox this
-    project was built in while huggingface.co was not (see README). Requires
-    `pip install spacy` plus the model wheel, e.g.:
-        pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0-py3-none-any.whl
-    """
 
     def __init__(self, model_name: str = "en_core_web_md"):
         import spacy  # local import: optional dep
