@@ -39,8 +39,6 @@ def test_load_html_strips_nav_and_footer_converts_headings(tmp_path):
 
 
 def test_load_pdf_extracts_real_text():
-    # Uses the actual generated corpus PDF rather than building a throwaway
-    # one here, so this test also catches drift if the corpus PDF changes.
     pdf_path = Path(__file__).parent.parent / "corpus" / "sla_support_policy.pdf"
     assert pdf_path.exists(), "run scripts/generate_sla_pdf.py first"
     text = load_pdf(pdf_path)
