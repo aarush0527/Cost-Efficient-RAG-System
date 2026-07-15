@@ -1,0 +1,71 @@
+[
+  {"id": "q01", "question": "How many times is data synchronously replicated within a region before a write is acknowledged?",
+   "anchor_snippets": ["replicated 3 times synchronously across"], "gold_answer": "3", "is_answerable": true},
+
+  {"id": "q02", "question": "What erasure coding scheme does NimbusStore use for the cold storage tier?",
+   "anchor_snippets": ["6-of-9 erasure coding scheme"], "gold_answer": "6-of-9", "is_answerable": true},
+
+  {"id": "q03", "question": "What is the maximum size of a single object in NimbusStore?",
+   "anchor_snippets": ["A single object may be up to 5 TB"], "gold_answer": "5 TB", "is_answerable": true},
+
+  {"id": "q04", "question": "Above what object size must multipart upload be used instead of a single PUT request?",
+   "anchor_snippets": ["Objects larger than 100 MB must be uploaded using the multipart upload API"],
+   "gold_answer": "100 MB", "is_answerable": true},
+
+  {"id": "q05", "question": "How much storage does the Free tier include per month?",
+   "anchor_snippets": ["5 GB of storage and 10 GB of egress"], "gold_answer": "5 GB", "is_answerable": true},
+
+  {"id": "q06", "question": "What is the per-GB storage price on the Pro tier?",
+   "anchor_snippets": ["billed at $0.015 per GB-month"], "gold_answer": "$0.015 per GB-month", "is_answerable": true},
+
+  {"id": "q07", "question": "What happens if a cold-tier object is deleted before it has been archived for 180 days?",
+   "anchor_snippets": ["an early-deletion fee applies, prorated"], "gold_answer": "an early-deletion fee applies", "is_answerable": true},
+
+  {"id": "q08", "question": "What encryption algorithm is used for data at rest by default?",
+   "anchor_snippets": ["encrypted at rest using AES-256 by default"], "gold_answer": "AES-256", "is_answerable": true},
+
+  {"id": "q09", "question": "What TLS version is required for the API and web console?",
+   "anchor_snippets": ["requires TLS 1.3"], "gold_answer": "TLS 1.3", "is_answerable": true},
+
+  {"id": "q10", "question": "How long are audit logs retained by default?",
+   "anchor_snippets": ["Audit logs are retained for 400 days by default", "Audit logs (see security_compliance.md) are retained for 400 days by default"],
+   "gold_answer": "400 days", "is_answerable": true},
+
+  {"id": "q11", "question": "How long does a NimbusStore API bearer token remain valid before it expires?",
+   "anchor_snippets": ["expire 12 hours after issuance", "keys expire 12 hours after issuance", "tokens expire 12 hours after issuance"],
+   "gold_answer": "12 hours", "is_answerable": true},
+
+  {"id": "q12", "question": "What does a 429 response from the NimbusStore API mean, and what should you do?",
+   "anchor_snippets": ["the per-token rate limit was exceeded", "exceeded the default rate limit of 200 requests per second"],
+   "gold_answer": "rate limit exceeded, retry after the Retry-After header duration", "is_answerable": true},
+
+  {"id": "q13", "question": "What is the default API rate limit, in requests per second, for Starter and Pro tier tokens?",
+   "anchor_snippets": ["limited to 200 requests per second"], "gold_answer": "200", "is_answerable": true},
+
+  {"id": "q14", "question": "What is NimbusStore's Severity 1 support response time commitment for Enterprise customers?",
+   "anchor_snippets": ["Enterprise customers receive a 1 hour response time commitment"], "gold_answer": "1 hour", "is_answerable": true},
+
+  {"id": "q15", "question": "At what monthly uptime percentage does the service credit increase to 25%?",
+   "anchor_snippets": ["falls below 99.0%, the credit"], "gold_answer": "below 99.0%", "is_answerable": true},
+
+  {"id": "q16", "question": "For how many days are deleted objects recoverable by default before being permanently purged?",
+   "anchor_snippets": ["it is recoverable for", "30 days by default"], "gold_answer": "30 days", "is_answerable": true},
+
+  {"id": "q17", "question": "Can object versioning be enabled on a bucket after the bucket has already been created?",
+   "anchor_snippets": ["Versioning must be enabled at bucket creation time"], "gold_answer": "no, only at bucket creation", "is_answerable": true},
+
+  {"id": "q18", "question": "After requesting a restore, how long can it take before a cold-storage object becomes downloadable?",
+   "anchor_snippets": ["can take up to 4 hours before the object becomes downloadable"], "gold_answer": "up to 4 hours", "is_answerable": true},
+
+  {"id": "q19", "question": "Does NimbusStore support paying for storage using cryptocurrency?",
+   "anchor_snippets": [], "gold_answer": "", "is_answerable": false},
+
+  {"id": "q20", "question": "What is NimbusStore's carbon offset policy for its data centers?",
+   "anchor_snippets": [], "gold_answer": "", "is_answerable": false},
+
+  {"id": "q21", "question": "Does NimbusStore offer a native mobile app for iOS?",
+   "anchor_snippets": [], "gold_answer": "", "is_answerable": false},
+
+  {"id": "q22", "question": "Does NimbusStore support client-side homomorphic encryption for search over encrypted data?",
+   "anchor_snippets": [], "gold_answer": "", "is_answerable": false}
+]
