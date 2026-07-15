@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: ragapp
+Version: 0.1.0
+Summary: Cost-efficient RAG service on embedded Qdrant
+Requires-Python: >=3.11
