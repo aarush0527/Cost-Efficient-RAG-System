@@ -31,17 +31,11 @@ def _default_length(text: str) -> int:
 
 @dataclass
 class Section:
-    """A contiguous piece of text with the markdown-header breadcrumb that
-    precedes it, e.g. breadcrumb=["Pricing", "Enterprise tier"]."""
     breadcrumb: tuple[str, ...]
     text: str
 
 
 def split_into_sections(raw_text: str) -> list[Section]:
-    """Walk the raw text line by line, tracking markdown header depth, and
-    group non-header lines into Section objects tagged with the header path
-    active at that point. Works fine on plain text / HTML-derived text too
-    (there just won't be any '#' headers, so it degenerates to one section)."""
     sections: list[Section] = []
     breadcrumb_stack: list[tuple[int, str]] = []  # (level, title)
     buffer: list[str] = []
@@ -74,17 +68,11 @@ def _split_paragraphs(text: str) -> list[str]:
 
 
 def _split_sentences(text: str) -> list[str]:
-    # Simple, dependency-free sentence splitter. Good enough for chunk
-    # boundaries (we're not doing NLP here, just trying to avoid cutting
-    # mid-sentence where possible).
     parts = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9])", text)
     return [p.strip() for p in parts if p.strip()]
 
 
 def _pack(units: list[str], chunk_size: int, overlap: int, length_fn: Callable[[str], int]) -> list[str]:
-    """Greedily pack small units (sentences/paragraphs) into chunks close to
-    chunk_size, carrying `overlap` worth of trailing content into the next
-    chunk for continuity."""
     chunks: list[str] = []
     current: list[str] = []
     current_len = 0
@@ -96,8 +84,7 @@ def _pack(units: list[str], chunk_size: int, overlap: int, length_fn: Callable[[
         u_len = length_fn(unit)
 
         if u_len > chunk_size:
-            # Atomic unit bigger than a whole chunk: flush what we have,
-            # then hard-cut this unit on its own.
+    
             if current:
                 chunks.append(join(current))
                 current, current_len = [], 0
@@ -108,7 +95,6 @@ def _pack(units: list[str], chunk_size: int, overlap: int, length_fn: Callable[[
         if current_len + u_len + 1 > chunk_size and current:
             chunk_text = join(current)
             chunks.append(chunk_text)
-            # carry trailing overlap into the next chunk
             carry: list[str] = []
             carry_len = 0
             for prev in reversed(current):
@@ -131,8 +117,7 @@ def _pack(units: list[str], chunk_size: int, overlap: int, length_fn: Callable[[
 class Chunk:
     text: str
     chunk_index: int
-    section_path: str  # human-readable breadcrumb, e.g. "Pricing > Enterprise tier"
-
+    section_path: str
 
 def chunk_text(
     raw_text: str,
@@ -140,11 +125,7 @@ def chunk_text(
     chunk_overlap: int = 200,
     length_fn: Callable[[str], int] = _default_length,
 ) -> list[Chunk]:
-    """Recursive splitter: header -> paragraph -> sentence -> hard cut.
 
-    Deterministic given the same (raw_text, chunk_size, chunk_overlap): this
-    is what lets ingestion derive stable chunk ids from content alone.
-    """
     if chunk_overlap >= chunk_size:
         raise ValueError("chunk_overlap must be smaller than chunk_size")
 
@@ -160,8 +141,7 @@ def chunk_text(
             pieces = [section.text]
         else:
             paragraphs = _split_paragraphs(section.text)
-            # Expand any paragraph that's still too big into sentences so
-            # _pack has smaller units to work with.
+
             units: list[str] = []
             for p in paragraphs:
                 if length_fn(p) <= chunk_size:
