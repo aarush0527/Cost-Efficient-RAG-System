@@ -17,16 +17,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-# --- shared assumptions ---
-VECTOR_DIM = 384                # bge-small-en-v1.5 (recommended production embedder)
-BYTES_PER_FLOAT = 4              # float32
-HNSW_OVERHEAD_FACTOR = 1.5       # graph overhead on top of raw vectors (~1.5x is a commonly cited rule of thumb)
-PAYLOAD_BYTES_PER_CHUNK = 1200   # ~1000 chars of chunk text + source_file/section_path/etc metadata
+VECTOR_DIM = 384                
+BYTES_PER_FLOAT = 4              
+HNSW_OVERHEAD_FACTOR = 1.5       
+PAYLOAD_BYTES_PER_CHUNK = 1200  
 
-QUERIES_PER_DAY = 1000           # "lightly queried" assumption for this whole comparison
+QUERIES_PER_DAY = 1000          
 DAYS_PER_MONTH = 30
-PINECONE_READ_UNITS_PER_QUERY = 2   # a filtered query typically costs >1 RU; see cited source for the 1-10 RU range
-PINECONE_WRITES_PER_MONTH = 1000    # small trickle of updates, not a full re-ingest every month
+PINECONE_READ_UNITS_PER_QUERY = 2   
+PINECONE_WRITES_PER_MONTH = 1000    
 
 SCALES = [100_000, 1_000_000, 10_000_000]
 
@@ -55,8 +54,8 @@ def self_hosted_embedded_qdrant(n_vectors: int) -> CostEstimate:
     a bit of p95 latency for a compute footprint that doesn't have to scale
     with vector count. Fixed compute dominates at this scale; disk is cheap."""
     storage_gb = total_storage_gb(n_vectors, include_hnsw_overhead=True)
-    fixed_vm_usd = 18.0          # small VM (e.g. 2 vCPU / 2GB RAM), constant across all three scales
-    disk_usd_per_gb_month = 0.09  # e.g. AWS gp3 / DigitalOcean block storage, ballpark
+    fixed_vm_usd = 18.0          
+    disk_usd_per_gb_month = 0.09 
     disk_usd = storage_gb * disk_usd_per_gb_month
     total = fixed_vm_usd + disk_usd
     return CostEstimate(
@@ -71,7 +70,7 @@ def pinecone_serverless_usage_only(n_vectors: int) -> CostEstimate:
     """Pinecone's current (2026) default pricing model: pay for storage +
     read/write units, no idle/always-on charge. Storage $0.33/GB-mo, ~$16/M
     read units, ~$4/M write units (Standard plan, per cited sources)."""
-    storage_gb = total_storage_gb(n_vectors, include_hnsw_overhead=False)  # Pinecone bills raw stored bytes
+    storage_gb = total_storage_gb(n_vectors, include_hnsw_overhead=False) 
     storage_usd = storage_gb * 0.33
     monthly_queries = QUERIES_PER_DAY * DAYS_PER_MONTH
     read_units = monthly_queries * PINECONE_READ_UNITS_PER_QUERY
@@ -118,7 +117,7 @@ def pinecone_legacy_pods(n_vectors: int) -> CostEstimate:
     few million vectors at moderate dimensionality; we do not have a
     precise, current, officially-published pod-capacity table, so we model
     this coarsely as 1 pod per <=5M vectors - treat as illustrative, not exact."""
-    pods_needed = max(1, -(-n_vectors // 5_000_000))  # ceiling division
+    pods_needed = max(1, -(-n_vectors // 5_000_000)) 
     per_pod_usd = 70.0
     total = pods_needed * per_pod_usd
     return CostEstimate(
@@ -143,12 +142,11 @@ def qdrant_cloud_managed(n_vectors: int) -> CostEstimate:
             monthly_usd=0.0,
             notes=f"{storage_gb:.2f} GB fits the permanent free tier (1GB RAM / 4GB disk) - $0/mo.",
         )
-    # anchor points from third-party estimates (see cost_latency.md): ~$65-130/mo for
-    # a 5M-vector/768-dim production 3-node cluster; scale roughly by our storage footprint
+
     anchor_gb = total_storage_gb(5_000_000, include_hnsw_overhead=True) * (768 / VECTOR_DIM)
-    anchor_usd = 97.5  # midpoint of the $65-130 range
+    anchor_usd = 97.5 
     scaled = anchor_usd * (storage_gb / anchor_gb)
-    total = max(30.0, scaled)  # $30/mo Standard tier floor, per cited source
+    total = max(30.0, scaled) 
     return CostEstimate(
         label="Qdrant Cloud (managed, same engine)",
         monthly_usd=round(total, 2),
