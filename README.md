@@ -689,19 +689,39 @@ In addition, the system explicitly evaluates behavior when insufficient evidence
 
 The retrieval confidence gate allows the application to refuse unsupported questions rather than hallucinating an answer.
 
-### Example Summary
+### Results
 
 | Metric | Result |
-|---------|---------|
-| Faithfulness | **1.00** |
-| Relevance | **1.00** |
-| Hallucinated answers on unsupported queries | **0** |
-
-*(If you want to include refusal statistics, use the exact values from your latest evaluation report rather than rounding or estimating.)*
+|---------|-------:|
+| Answerable Questions | **18** |
+| Correctly Answered | **15 / 18 (83.3%)** |
+| False Refusals | **3** |
+| Unanswerable Questions | **4** |
+| Correctly Refused | **4 / 4 (100%)** |
+| Hallucinated Unsupported Answers | **0** |
+| Mean Faithfulness | **1.00** |
+| Mean Relevance | **1.00** |
+| Mean Exact Match | **0.00** |
+| Mean Token F1 | **0.167** |
 
 ---
 
 ## Latency Evaluation
+
+Latency is measured independently for each stage of the retrieval pipeline.
+
+| Stage | p50 | p95 |
+|------|------:|------:|
+| Embedding | **9.78 ms** | **12.00 ms** |
+| Retrieval | **0.43 ms** | **0.60 ms** |
+| Generation | **4809.54 ms** | **7929.84 ms** |
+| Total | **4820.37 ms** | **7940.49 ms** |
+
+The breakdown clearly shows that retrieval itself is extremely fast, while LLM inference dominates end-to-end response latency.
+
+---
+
+## Infrastructure Cost Analysis
 
 Latency is measured independently for each stage of the retrieval pipeline.
 
@@ -733,13 +753,21 @@ The comparison includes:
 - Pinecone Serverless
 - Legacy Pinecone Pods
 
-All assumptions are explicitly documented inside the evaluation pipeline so that cost estimates remain reproducible.
+### Example Monthly Cost Estimates
+
+| Scale | Embedded Qdrant | Pinecone (Realistic) |
+|------|----------------:|---------------------:|
+| 100K vectors | **$18.03/mo** | **$0/mo (Free Tier)** |
+| 1M vectors | **$18.29/mo** | **$50/mo** |
+| 10M vectors | **$20.94/mo** | **$50/mo** |
+
+The evaluation also compares Qdrant Cloud and legacy Pinecone pod deployments. All assumptions are explicitly documented inside the evaluation pipeline so that cost estimates remain reproducible.
 
 ---
 
 # Testing
 
-The repository contains a comprehensive automated test suite covering both individual components and complete workflows.
+The repository includes **24 automated tests** covering both individual components and complete workflows.
 
 The test suite validates:
 
@@ -757,6 +785,13 @@ Execute the complete test suite using:
 
 ```bash
 PYTHONPATH=src pytest tests -v
+```
+
+Final test run:
+
+```text
+24 Passed
+0 Failed
 ```
 
 The project also includes dedicated evaluation scripts for benchmarking retrieval quality, answer quality, latency, and infrastructure cost independently from the serving pipeline.
