@@ -79,7 +79,6 @@ def run() -> None:
     dataset = json.loads(DATASET_PATH.read_text())
     gold_map = resolve_gold_chunk_ids(service.store, dataset)
 
-    # ---------- retrieval metrics (independent of the LLM entirely) ----------
     retrieval_per_question = []
     max_k = max(K_VALUES)
     for item in dataset:
@@ -123,7 +122,7 @@ def run() -> None:
     )
     print("wrote eval/results/retrieval_metrics.json")
 
-    # ---------- full pipeline: answer quality, refusal behavior, latency ----------
+    #full pipeline: answer quality, refusal behavior, latency
     answer_rows = []
     for item in dataset:
         result = service.query(item["question"], top_k=PRIMARY_K)
