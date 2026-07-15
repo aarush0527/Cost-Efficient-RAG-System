@@ -159,9 +159,7 @@ def ingest_corpus(
 
         report.per_source.append(stats)
 
-    # Clean up documents that were fully removed from the corpus directory
-    # (not just edited) - iter_corpus_files only visits files present on
-    # disk, so this second pass is needed to catch full deletions.
+
     all_stored_sources = store.list_all_source_files()
     removed_sources = all_stored_sources - seen_source_files
     for removed_source in removed_sources:
