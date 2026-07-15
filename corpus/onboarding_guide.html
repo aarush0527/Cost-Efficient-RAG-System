@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Getting started with NimbusStore</title></head>
+<body>
+<nav>This nav bar and the footer below should be stripped by the loader.</nav>
+
+<h1>Getting started</h1>
+<p>This guide walks through the steps to start storing objects with NimbusStore.</p>
+
+<h2>Step 1: create an account</h2>
+<p>Sign up with your email address and verify it via the confirmation link
+NimbusStore sends you. Verification is required before you can create a
+bucket.</p>
+
+<h2>Step 2: create your first bucket</h2>
+<p>From the console, choose "Create bucket" and pick one of the three
+available regions: us-east-nimbus-1, us-west-nimbus-2, or eu-central-nimbus-1.
+The region cannot be changed after the bucket is created.</p>
+
+<h2>Step 3: generate an API key</h2>
+<p>Go to Settings, then API Keys, and generate a new key. Remember that keys
+expire 12 hours after issuance, so long-running scripts should handle
+re-authentication.</p>
+
+<h2>Step 4: upload your first object</h2>
+<p>Using the CLI: <code>nimbus cp file.txt nimbus://mybucket/file.txt</code>.
+Objects over 100 MB are uploaded automatically via multipart upload by the
+CLI; no extra flags are needed.</p>
+
+<h2>Step 5: optional - set a lifecycle rule</h2>
+<p>If you want objects to automatically move to the cheaper cold storage
+tier after a period of inactivity, configure a lifecycle rule on the bucket.
+By default, NimbusStore already auto-archives objects to cold storage after
+90 days of inactivity even without a custom rule.</p>
+
+<footer>This footer should be stripped by the loader.</footer>
+</body>
+</html>
