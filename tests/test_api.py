@@ -28,16 +28,10 @@ def test_ingest_then_query_with_context_and_without(monkeypatch):
         monkeypatch.setenv("QDRANT_PATH", str(Path(tmp) / "qdrant"))
         monkeypatch.setenv("LOG_PATH", str(Path(tmp) / "logs" / "queries.jsonl"))
         monkeypatch.delenv("GROQ_API_KEY", raising=False)
-        # Low threshold: the hashing embedder is a crude bag-of-ngrams model,
-        # not semantic, so its absolute similarity scores run lower than a
-        # real embedding model's - this only needs to demonstrate the gate
-        # logic works, not match production calibration (see eval/results
-        # for the real, semantically-calibrated threshold).
+      
         monkeypatch.setenv("MIN_RELEVANCE_SCORE", "0.05")
 
-        # import (only once - the module builds its service at import time using
-        # a QdrantClient file lock on QDRANT_PATH, so re-importing/reloading in
-        # the same process would try to open that lock twice and fail)
+
         from src.ragapp import api as api_module
 
         from fastapi.testclient import TestClient
@@ -51,7 +45,7 @@ def test_ingest_then_query_with_context_and_without(monkeypatch):
         assert ingest_resp["total_chunks"] >= 2
         assert ingest_resp["total_embedded"] >= 2
 
-        # re-ingest should be a no-op
+
         ingest_resp2 = client.post("/ingest").json()
         assert ingest_resp2["total_embedded"] == 0
 
@@ -64,7 +58,7 @@ def test_ingest_then_query_with_context_and_without(monkeypatch):
         assert q1["cited_chunk_ids"], "a grounded answer should cite at least one chunk"
         assert all(r["text"].strip() for r in q1["retrieved"]), "retrieved chunks must carry their actual text"
 
-        # metadata filter: restrict to a doc_category that doesn't exist -> no results -> no context
+
         q2 = client.post("/query", json={
             "question": "How many factories manufacture NimbusWidget devices?",
             "metadata_filter": {"doc_category": "nonexistent-category"},
