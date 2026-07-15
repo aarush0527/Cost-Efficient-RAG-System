@@ -1,0 +1,35 @@
+# --- core service ---
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+
+# --- vector store ---
+qdrant-client==1.12.1
+
+# --- embeddings (production default; downloads weights from Hugging Face on first run) ---
+sentence-transformers==3.3.1
+
+# --- embeddings (alternative offline-friendly backend; see README) ---
+spacy==3.8.14
+# model wheel, installed separately (GitHub release asset, not Hugging Face Hub):
+#   pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0-py3-none-any.whl
+
+# --- document loaders ---
+pypdf==5.1.0
+beautifulsoup4==4.12.3
+lxml==5.3.0
+
+# --- LLM ---
+groq==1.5.0
+
+# --- eval / metrics ---
+numpy==2.2.0
+
+# --- corpus authoring (generates the demo PDF) ---
+reportlab==4.2.5
+
+# --- dev / test ---
+pytest==8.3.4
+httpx==0.28.1
