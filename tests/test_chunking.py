@@ -15,7 +15,7 @@ def test_respects_chunk_size_roughly():
     text = "This is a sentence. " * 500
     chunks = chunk_text(text, chunk_size=500, chunk_overlap=100)
     assert len(chunks) > 1
-    # allow slack: packing is greedy on sentence boundaries, not exact
+
     for c in chunks:
         assert len(c.text) <= 600
 
@@ -24,7 +24,7 @@ def test_overlap_creates_continuity():
     text = "Sentence one. Sentence two. Sentence three. Sentence four. Sentence five. " * 30
     chunks = chunk_text(text, chunk_size=200, chunk_overlap=60)
     assert len(chunks) > 1
-    # some trailing words of chunk[i] should reappear at the start of chunk[i+1]
+
     tail = chunks[0].text[-20:]
     assert any(tail[-5:] in chunks[i].text for i in range(1, len(chunks)))
 
@@ -51,11 +51,11 @@ def test_section_split_nesting_pops_correctly():
     breadcrumbs = [s.breadcrumb for s in sections]
     assert ("A",) in breadcrumbs
     assert ("A", "B") in breadcrumbs
-    assert ("C",) in breadcrumbs  # back to depth-1, "B" should have popped
+    assert ("C",) in breadcrumbs  
 
 
 def test_atomic_unit_bigger_than_chunk_hard_cuts():
-    huge_word_block = "x" * 3000  # one giant "paragraph", no sentence breaks
+    huge_word_block = "x" * 3000 
     chunks = chunk_text(huge_word_block, chunk_size=500, chunk_overlap=50)
     assert len(chunks) >= 6
     for c in chunks:
