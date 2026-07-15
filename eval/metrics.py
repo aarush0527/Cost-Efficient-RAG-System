@@ -64,7 +64,6 @@ def average_precision_at_k(retrieved_ids: list[str], gold_ids: set[str]) -> floa
     return precision_sum / denom if denom > 0 else 0.0
 
 
-# --- answer string metrics (SQuAD-style) ---
 
 _ARTICLES = {"a", "an", "the"}
 
