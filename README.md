@@ -459,7 +459,7 @@ This makes the project easy to use without running the HTTP service.
 Clone the repository
 
 ```bash
-git clone https://github.com/<username>/Cost-Efficient-RAG-System.git
+git clone https://github.com/aarush0527/Cost-Efficient-RAG-System.git
 
 cd Cost-Efficient-RAG-System
 ```
