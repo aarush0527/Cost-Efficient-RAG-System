@@ -107,3 +107,40 @@ Self-hosted cost stays essentially flat across three orders of magnitude because
 - **Qdrant, embedded** over pgvector/ChromaDB/LanceDB/FAISS/sqlite-vec: a real engine with a native filter DSL and upsert-by-ID (not a bare index you'd have to hand-roll metadata handling around), and the same engine Qdrant Cloud runs — so a managed-vs-self-hosted comparison isolates the actual hosting premium instead of conflating it with a software choice.
 - **Groq** for inference: OpenAI-compatible tool-calling, so structured output (an answer with citations, or a judge's rubric score) is forced via schema rather than hoped for from prompted JSON.
 - **Anchor-snippet gold resolution**: eval ground truth isn't a hardcoded list of chunk IDs (those are content hashes and shift if chunking parameters change) — each eval question carries a short, unique text snippet, resolved to whichever chunk(s) currently contain it. Robust to re-chunking, and multi-document facts naturally produce multi-gold test cases instead of being special-cased away.
+
+
+## Project structure
+
+├── src/ragapp/
+│   ├── config.py          # env-driven settings
+│   ├── loaders.py          # PDF / HTML / MD → text
+│   ├── chunking.py         # deterministic recursive splitter
+│   ├── embeddings.py       # 3-tier embedder abstraction
+│   ├── vectorstore.py      # Qdrant wrapper
+│   ├── ingest.py           # idempotent ingestion + manifest diffing
+│   ├── llm.py              # Groq client (tool-calling) + offline stub
+│   ├── rag_service.py      # retrieve → gate → generate → cite
+│   ├── api.py / cli.py     # FastAPI app / CLI
+│   └── logging_utils.py
+├── corpus/                 # sample documents (md, html, pdf)
+├── eval/
+│   ├── eval_dataset.json
+│   ├── metrics.py           # Hit Rate / Recall@k / MRR / nDCG@k / AP@k / EM / F1
+│   ├── run_eval.py
+│   ├── cost_model.py
+│   └── results/
+└── tests/
+
+## Testing
+
+```bash
+pytest tests/ -v
+```
+
+24 tests: chunker correctness, idempotent ingestion (no-op re-ingest, targeted re-embed on edit, cleanup on deletion), all three document loaders, IR metrics against hand-computed cases, and end-to-end API behavior.
+
+## Limitations & roadmap
+
+- The bundled `spaCy`/hashing embedder tiers exist for offline dev and CI speed — `sentence-transformers` (the default) is the recommended path for real retrieval quality.
+- Single-node embedded deployment has no built-in HA, replication, or backups — fine for the light-query use case this is built for, not a drop-in for multi-writer production without running Qdrant as its own server process.
+- Planned: a second vector-store benchmark (FAISS or a brute-force baseline) to validate ANN recall at larger scale.
