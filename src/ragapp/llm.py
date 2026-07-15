@@ -77,9 +77,9 @@ class AnswerResult:
 
 @dataclass
 class JudgeResult:
-    faithfulness_score: float  # 0.0-1.0, normalized from a 1-5 rubric
+    faithfulness_score: float  
     faithfulness_rationale: str
-    relevance_score: float  # 0.0-1.0, normalized from a 1-5 rubric
+    relevance_score: float  
     relevance_rationale: str
     input_tokens: int = 0
     output_tokens: int = 0
@@ -160,7 +160,7 @@ class BaseLLMClient(ABC):
 
 class GroqLLMClient(BaseLLMClient):
     def __init__(self, api_key: str, generator_model: str, judge_model: str):
-        from groq import Groq  # local import: optional dep, only needed on this path
+        from groq import Groq  
 
         self._client = Groq(api_key=api_key)
         self.generator_model = generator_model
@@ -180,8 +180,7 @@ class GroqLLMClient(BaseLLMClient):
             tool_calls = message.tool_calls or []
             if not tool_calls:
                 return None, resp.usage, "model returned no tool call"
-            # Groq's SDK does NOT pre-parse arguments into a dict - it's a raw
-            # JSON string, so this json.loads is doing real, necessary work.
+        
             args = json.loads(tool_calls[0].function.arguments)
             return args, resp.usage, None
         except Exception as e:
