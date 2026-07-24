@@ -1,31 +1,4 @@
-"""
-Embedding backends, behind one interface.
 
-Why two backends: the documented, recommended default for real use is a
-local open-source sentence embedding model (BAAI/bge-small-en-v1.5, 384-dim)
-run via `sentence-transformers` - it costs $0 per call (a real chunk of this
-project's "low cost" story: no embedding API bill at any scale), and runs
-fine on CPU.
-
-That model's weights are fetched from the Hugging Face Hub on first use.
-This is a completely normal one-time step on a machine with internet access
-- but the sandbox this project was *built* in has network access restricted
-to a small allowlist that does not include huggingface.co, so the real
-backend could not be exercised end-to-end during development here (verified:
-a request to huggingface.co returns 403 from the sandbox's egress proxy).
-
-Rather than mock this away silently, there's a second, deterministic,
-offline backend (`HashingEmbedder`) used for local tests / CI / this dev
-sandbox: a seeded random-projection of hashed character n-grams into a fixed
-dimensionality. It needs no network and no model weights, and - because it's
-deterministic - is genuinely useful for fast unit tests independent of
-whether HF is reachable. It is *not* a semantic embedding and is clearly
-labelled as a fallback, never presented as the "real" result.
-
-Which one is active is one env var: EMBEDDER_BACKEND=sentence-transformers|hashing.
-Both record `model_name` and `dimension`, per the ingestion requirement to
-track embedding model + dimensionality alongside the vectors.
-"""
 from __future__ import annotations
 
 import hashlib
